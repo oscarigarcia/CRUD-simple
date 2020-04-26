@@ -1,32 +1,11 @@
 /* eslint-disable no-param-reassign */
 const express = require("express");
+const booksController = require("../controllers/booksController");
 
 function routes(Book) {
   const bookRouter = express.Router();
-
-  bookRouter
-    .route("/books")
-    .post((req, res) => {
-      const book = new Book(req.body);
-
-      book.save();
-      res.status(201).json(book);
-    })
-    .get((req, res) => {
-      const query = {};
-      if (req.query.genre) {
-        query.genre = req.query.genre;
-      }
-      Book.find(query, (err, books) => {
-        if (err) {
-          return res.send(err);
-        }
-        return res.json(books);
-      });
-
-      //   TODO:  const response = { hello: "This is a test!!" };
-      //   res.json(response);
-    });
+  const controller = booksController(Book);
+  bookRouter.route("/books").post(controller.post).get(controller.get);
 
   // TODO: This is a middleware
   bookRouter.use("/books/:bookId", (req, res, next) => {
